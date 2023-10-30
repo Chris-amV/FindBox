@@ -193,32 +193,3 @@ def d1(x,U):
     for i in U.Boxes:
         dist = max(dist,i.minDist(x))
     return dist
-
-# TESTpoint = point(2)
-# TESTpoint.defineCoords()
-# TEST = Box(2)
-# TEST.defineBorders()
-# TEST1 = Box(2)
-# TEST1.defineBorders()
-# TESTSPACE = space(2)
-# TESTSPACE.addBoxes(TEST)
-# TESTSPACE.addBoxes(TEST1)
-# print(TEST.Borders)
-# print(TEST1.Borders)
-# print(TESTpoint.coord)
-# print(TEST.isInBox(TESTpoint))
-# print(TEST1.isInBox(TESTpoint))
-# print(TEST.minDist(TESTpoint))
-# print(TEST1.minDist(TESTpoint))
-
-
-# print(d1(TESTpoint,TESTSPACE))
-# # plot (only for 2D)
-# fig, ax = plt.subplots()
-# TESTpoint.plot(ax)
-# TESTSPACE.plot(ax)
-
-
-
-
-
