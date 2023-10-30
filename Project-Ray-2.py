@@ -11,7 +11,7 @@ from timeit import default_timer as timer
 
 
 def walkBox(p,U,f = -1):
-    global Ocount
+    global Ocount   #Ocount is used to count the number of thime the oracle is called
     corners = []
     n = U.dim-1
     n = 1
@@ -19,19 +19,19 @@ def walkBox(p,U,f = -1):
         # print("Moving in the {} dim!".format(y+1))
         delta = 1
         pbO = copy.deepcopy(p)
-        while d1(p,U) <= 0:
+        while d1(p,U) <= 0:         #if the point is outside the box
             Ocount += 1
             print("bad point")
         Ocount += 1
         pb = copy.deepcopy(p)
         insideDis = d1(pb,U)
         Ocount += 1
-        while insideDis != 0:
+        while insideDis != 0:   #Moving the point to the border of the box
             pb.coord[y] -= insideDis
             insideDis = d1(pb,U)
             Ocount += 1
         po = copy.deepcopy(pb)
-        for k in range(y+1,U.dim):
+        for k in range(y+1,U.dim):  #Starting the loops
             if k != f and f != -1:
                 k = f
             # print("Loop in the {} dim:".format(k+1))
@@ -56,7 +56,7 @@ def walkBox(p,U,f = -1):
                 pb.coord[dir[0]] += s*dist1
                 pi.coord[dir[0]] += s*dist1
 
-                if d1(pi,U) == 0 and d1(pb,U) == 0:
+                if d1(pi,U) == 0 and d1(pb,U) == 0:     #corner point has been reached
                     Ocount += 2
                     pr = copy.deepcopy(pb)
                     pr.pl = copy.deepcopy(dir)
@@ -68,14 +68,14 @@ def walkBox(p,U,f = -1):
                     s = temp_s
                     pr.pl[1] = -(pr.pl[1] + 1)*s
                     corners.append(copy.deepcopy(pr))
-                    if o != len(corners)-1:
+                    if o != len(corners)-1:             #connecting the new corner to the previous one
                         corners[-1].points[0] = corners[-2]
                         corners[-2].points[1] = corners[-1]
 
                 distpb = d1(pb,U)
                 Ocount += 1
-                if distpb != 0:
-                    while distpb != 0:
+                if distpb != 0:                         #intersection point has been reached
+                    while distpb != 0:              #moving the point back to the intersection point
                         pb.coord[dir[0]] -= s*distpb
                         pi.coord[dir[0]] -= s*distpb
                         distpb = d1(pb,U)
@@ -91,13 +91,14 @@ def walkBox(p,U,f = -1):
                     s = temp_s
                     pr.pl[1] = (pr.pl[1] + 1)*s
                     corners.append(copy.deepcopy(pr))
-                    if o != len(corners)-1:
+                    if o != len(corners)-1:             #connecting the new corner to the previous one
                         corners[-1].points[0] = corners[-2]
                         corners[-2].points[1] = corners[-1]
 
-                if len(corners) > o+4:
+                if len(corners) > o+4:                  #Fail safe
                     if corners[-1].samePoint(corners[o]):
                         break
+            #connect the first and last points
             corners = corners[:-1]
             corners[-1].points[1] = corners[o]
             corners[o].points[0] = corners[-1]
