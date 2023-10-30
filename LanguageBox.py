@@ -175,13 +175,14 @@ def recon(res,U):
                             count = 0
                             TestPoints = plain[x.index(y)]
                             newP = copy.deepcopy(p)
-                            while len(lowP) == 0 or len(highP) == 0:
+                            while len(lowP) == 0 or len(highP) == 0:    #redo if no points where found but now with the points that where added by mini WalkBox
                                 for pp in TestPoints:
                                     if (d+1 in pp.pl or -d-1 in pp.pl) and ((pp.coord[abs(dP)-1]< p.coord[abs(dP)-1] and pp.coord[abs(dP)-1] > Op.coord[abs(dP)-1] and dP > 0) or (pp.coord[abs(dP)-1]> p.coord[abs(dP)-1] and pp.coord[abs(dP)-1] < Op.coord[abs(dP)-1] and dP < 0)):
                                         if pp.pl[1] == s*(i+1):
                                             z = 0
                                         else:
                                             z = 1
+                                        # Testing the point pp to see if could be part of the face
                                         if pp in lowP or pp in highP or pp.points[z] in lowP or pp.points[z] in highP:
                                             continue
                                         if ((p.coord[abs(pp.pl[z])-1] > pp.coord[abs(pp.pl[z])-1] or p.coord[abs(pp.pl[z])-1] < pp.points[z].coord[abs(pp.pl[z])-1]) and pp.pl[z] > 0) or ((p.coord[abs(pp.pl[z])-1] < pp.coord[abs(pp.pl[z])-1] or p.coord[abs(pp.pl[z])-1] > pp.points[z].coord[abs(pp.pl[z])-1]) and pp.pl[z] < 0):
@@ -193,6 +194,8 @@ def recon(res,U):
                                             search = plain[x.index(y)] + TestPoints
                                         else:
                                             search = plain[x.index(y)]
+
+                                        # create a the smallest face that contains p, pp and their opposite points to check if there is any point inside of the face
                                         TestB = Box(n)
                                         for Db in range(0,n):
                                             if Db == i:
