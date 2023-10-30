@@ -125,8 +125,7 @@ def recon(res,U):
             plain = []  #stores the points corresponding to x
             inter = []  #stores the intersection points corresponding to x2
 
-            # going through the points and storing them depending on wich face they are in
-            # print("part1")
+            # going through the points and storing them depending on their position
             for k in res:
                 k.a = 0
                 if s*(i+1) in k.pl or -s*(i+1) in k.pl:
@@ -140,27 +139,26 @@ def recon(res,U):
                             x2.append(k.coord[i])
                             inter.append([])
                         inter[x2.index(k.coord[i])].append(k)
-            # print("part2")
+            # separating the faces at each position
             for y in x:
                 mess = []
                 for p in plain[x.index(y)]:
                     NoBox = 0
                     onetry = 0
-                    mix = [0]*n
-                    if p.a == 0:
+                    mix = [0]*n         #stores the points that are on the same face as p and stores them depending on with dimension they represent
+                    if p.a == 0:        #Not part of any face that has been found already
                         if p.a == 1:
                             continue
                         p.a = 1
                         mess.append([])
-                        if abs(p.pl[1]) == i+1:
+                        if abs(p.pl[1]) == i+1:     #Finding p's opposite point
                             dP = p.pl[0]
                             Op = p.points[0]
                         else:
                             dP = p.pl[1]
                             Op = p.points[1]
                         Op.a = 1
-                        for d in range(0,n):
-                            # print(d)
+                        for d in range(0,n):    #going through each dimension to find the points that are on the same face as p
                             if d == i:
                                 mix[d] = []
                                 continue
@@ -169,7 +167,6 @@ def recon(res,U):
                                     mix[d] = [Op,p]
                                 else:
                                     mix[d] = [p,Op]
-                                # print(d,[mix[d][0].coord[d],mix[d][1].coord[d]],0)
                                 continue
                             low = 0
                             lowP = []
