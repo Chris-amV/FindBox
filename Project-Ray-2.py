@@ -819,49 +819,9 @@ while n != 1:
     if count1 != 0:
         print("OVER ESTIMATION")
         over += 1
-        # cont = input("continue?")
-        # if cont == "n":
-        #     break
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111, projection='3d')
-
-        # for i in Faces:
-        #     i.plot3D(ax,0)
-        #     if (-2 in i.pl or 2 in i.pl):
-        #         pass
-        # # for i in BADP:
-        # #     print(i.coord)
-        # #     i.plot3D(ax,1)
-        # #     pass
-
-        # plt.ylim(-1,101)
-        # plt.xlim(-1,101)
-        # ax.set_zlim(-1,101)
-        # plt.grid()
-        # rec.plot3D(ax,1,0)
-        # #S.plot3D(ax,1,1)
-        # plt.show()
     if count != 0:
         print("UNDER ESTIMATION")
         under += 1
-        # cont = input("continue?")
-        # if cont == "n":
-        #     break
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111, projection='3d')
-
-        # for i in Faces:
-        #     i.plot3D(ax,0)
-        #     if (-2 in i.pl or 2 in i.pl):
-        #         pass
-
-        # plt.ylim(-1,21)
-        # plt.xlim(-1,21)
-        # ax.set_zlim(-1,21)
-        # plt.grid()
-        # rec.plot3D(ax,1,0)
-        # #S.plot3D(ax,1,1)
-        # plt.show()
     print("############################################################")
     print("over: "+str(over)+ " / "+ str(over*100/total)+ "%")
     print("overA: "+str(overA/total)+ "%")
