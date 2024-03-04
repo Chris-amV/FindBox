@@ -4,6 +4,8 @@ import numpy as np
 from itertools import product, combinations
 from timeit import default_timer as timer
 
+global delta
+delta = 0.001
 class point:
     def __init__(self,n):
         self.dim = n
@@ -22,7 +24,7 @@ class point:
 
     def samePoint(self,x):
         for i in range(0,self.dim):
-            if self.coord[i] != x.coord[i]:
+            if self.coord[i] < x.coord[i] - 0.00001 or self.coord[i] > x.coord[i] + 0.00001:   
                 return False
         return True
 
@@ -111,9 +113,9 @@ class Box:
                                 lw=5))
 
     def plot3D(self,ax,b):
-        x, y, z = np.indices((20, 20, 20))
-        axes = [20, 20, 20]
-        cube1 = (x >= self.Borders[0][0]) & (y >= self.Borders[1][0]) & (z >= self.Borders[2][0]) & (x < self.Borders[0][1]) & (y < self.Borders[1][1]) & (z < self.Borders[2][1])
+        x, y, z = np.indices((40, 40, 40))
+        axes = [40, 40, 40]
+        cube1 = (x >= self.Borders[0][0]+20) & (y >= self.Borders[1][0]+20) & (z >= self.Borders[2][0]+20) & (x < self.Borders[0][1]+20) & (y < self.Borders[1][1]+20) & (z < self.Borders[2][1]+20)
         colors = np.empty(axes + [4], dtype=np.float32)
         if b == 0:
             colors[cube1] = [0, 0, 1, 0.7]
@@ -127,9 +129,9 @@ class Box:
         else:
             ans = 1
             for i in range(0,self.dim):
-                if x.coord[i] < self.Borders[i][0] or  x.coord[i] > self.Borders[i][1]:
+                if x.coord[i] < self.Borders[i][0]-delta or  x.coord[i] > self.Borders[i][1]+ delta:
                     return 0
-                elif x.coord[i] == self.Borders[i][0] or  x.coord[i] == self.Borders[i][1]:
+                elif (x.coord[i] >= self.Borders[i][0]-delta and x.coord[i] <= self.Borders[i][0]+delta)  or  (x.coord[i] >= self.Borders[i][1]-delta and x.coord[i] <= self.Borders[i][1]+delta):
                     ans = 0.5
         return ans
 
@@ -178,9 +180,9 @@ class space:
         plt.show()
 
     def plot3D(self,ax,x,b):
-        plt.ylim(0,10)
-        plt.xlim(0,10)
-        ax.set_zlim(0,10)
+        plt.ylim(0,40)
+        plt.xlim(0,40)
+        ax.set_zlim(0,40)
         plt.grid()
         if x == 1:
             for i in self.Boxes:

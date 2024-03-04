@@ -3,35 +3,37 @@ from matplotlib.patches import Rectangle
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import box
-from box import point, Box, space, d2
+from box import point, Box, space, d1
 import copy
 import random
 from timeit import default_timer as timer
+from model import d2
 
 
 
-def walkBox(p,U,f = -1):
+def walkBox(p,f = -1):
     global Ocount   #Ocount is used to count the number of thime the oracle is called
     corners = []
-    n = U.dim-1
+    n = p.dim-1
     n = 1
+    Er = 0.00001
     for y in range(0,n):
         # print("Moving in the {} dim!".format(y+1))
         delta = 1
         pbO = copy.deepcopy(p)
-        while d2(p,U) <= 0:         #if the point is outside the box
+        while d2(p) <= 0:         #if the point is outside the box
             Ocount += 1
             print("bad point")
         Ocount += 1
         pb = copy.deepcopy(p)
-        insideDis = d2(pb,U)
+        insideDis = d2(pb)
         Ocount += 1
-        while insideDis != 0:   #Moving the point to the border of the box
+        while insideDis > 0+Er or insideDis < 0-Er:   #Moving the point to the border of the box
             pb.coord[y] -= insideDis
-            insideDis = d2(pb,U)
+            insideDis = d2(pb)
             Ocount += 1
         po = copy.deepcopy(pb)
-        for k in range(y+1,U.dim):  #Starting the loops
+        for k in range(y+1,p.dim):  #Starting the loops
             if k != f and f != -1:
                 k = f
             # print("Loop in the {} dim:".format(k+1))
@@ -39,7 +41,7 @@ def walkBox(p,U,f = -1):
             pi = copy.deepcopy(pb)
             pi.coord[y] += delta
             dir = [k,y]
-            s = 1
+            s = int(1)
             first = True
             count = 0
             while True:
@@ -51,45 +53,52 @@ def walkBox(p,U,f = -1):
                         count = 0
                     else:
                         count +=1
-                dist1 = d2(pi,U)
+                dist1 = d2(pi)
                 Ocount += 1
                 pb.coord[dir[0]] += s*dist1
                 pi.coord[dir[0]] += s*dist1
 
-                if d2(pi,U) == 0 and d2(pb,U) == 0:     #corner point has been reached
+                # pb.coord[dir[0]] = round(pb.coord[dir[0]],5)
+                # pi.coord[dir[0]] = round(pi.coord[dir[0]],5)
+
+                distpb = d2(pb)
+                distpi = d2(pi)
+                Ocount += 1
+                if distpi <= 0+Er and distpi >= 0-Er and distpb <= 0+Er and distpb >= 0-Er:     #corner point has been reached
                     Ocount += 2
                     pr = copy.deepcopy(pb)
                     pr.pl = copy.deepcopy(dir)
-                    pr.pl[0] = (pr.pl[0] + 1)*s
+                    pr.pl[0] = int(round((pr.pl[0] + 1)*s,1))
                     dir[0],dir[1] = dir[1],dir[0]
                     temp_s = pi.coord[dir[0]] - pb.coord[dir[0]]
                     pb = copy.deepcopy(pi)
                     pi.coord[dir[1]] -= s*delta
                     s = temp_s
-                    pr.pl[1] = -(pr.pl[1] + 1)*s
+                    pr.pl[1] = int(round(-(pr.pl[1] + 1)*s,1))
                     corners.append(copy.deepcopy(pr))
                     if o != len(corners)-1:             #connecting the new corner to the previous one
                         corners[-1].points[0] = corners[-2]
                         corners[-2].points[1] = corners[-1]
 
-                distpb = d2(pb,U)
-                Ocount += 1
-                if distpb != 0:                         #intersection point has been reached
-                    while distpb != 0:              #moving the point back to the intersection point
+
+                if distpb > 0+Er or distpb < 0-Er:                         #intersection point has been reached
+                    while distpb > 0+Er or distpb < 0-Er:              #moving the point back to the intersection point
                         pb.coord[dir[0]] -= s*distpb
                         pi.coord[dir[0]] -= s*distpb
-                        distpb = d2(pb,U)
+                        distpb = d2(pb)
                         Ocount += 1
+                    # pb.coord[dir[0]] = round(pb.coord[dir[0]],5)
+                    # pi.coord[dir[0]] = round(pi.coord[dir[0]],5)
                     pr = copy.deepcopy(pb)
                     pr.pl = copy.deepcopy(dir)
                     pr.pl.append(0)
-                    pr.pl[0] = -(pr.pl[0] + 1)*s
+                    pr.pl[0] = int(round(-(pr.pl[0] + 1)*s,1))
                     dir[0],dir[1] = dir[1],dir[0]
                     temp_s = pb.coord[dir[0]] - pi.coord[dir[0]]
                     pi = copy.deepcopy(pb)
                     pi.coord[dir[1]] += s*delta
                     s = temp_s
-                    pr.pl[1] = (pr.pl[1] + 1)*s
+                    pr.pl[1] = int(round((pr.pl[1] + 1)*s,1))
                     corners.append(copy.deepcopy(pr))
                     if o != len(corners)-1:             #connecting the new corner to the previous one
                         corners[-1].points[0] = corners[-2]
@@ -98,6 +107,9 @@ def walkBox(p,U,f = -1):
                 if len(corners) > o+4:                  #Fail safe
                     if corners[-1].samePoint(corners[o]):
                         break
+
+                if distpb >= 0+Er and distpb <= 0-Er:
+                    return []
             #connect the first and last points
             corners = corners[:-1]
             corners[-1].points[1] = corners[o]
@@ -106,7 +118,7 @@ def walkBox(p,U,f = -1):
                 break
     return corners
 
-def recon(res,U):
+def recon(res):
     global Faces
     Faces = []
     n = res[0].dim
@@ -130,7 +142,7 @@ def recon(res,U):
                 k.a = 0
                 if s*(i+1) in k.pl or -s*(i+1) in k.pl:
                     if s*(i+1) in k.pl and 0 not in k.pl:
-                        if k.coord[i]  not in x:
+                        if k.coord[i] not in x:
                             x.append(k.coord[i])
                             plain.append([])
                         plain[x.index(k.coord[i])].append(k)
@@ -140,6 +152,7 @@ def recon(res,U):
                             inter.append([])
                         inter[x2.index(k.coord[i])].append(k)
             # separating the faces at each position
+            # print(plain)
             for y in x:
                 mess = []
                 for p in plain[x.index(y)]:
@@ -152,10 +165,10 @@ def recon(res,U):
                         p.a = 1
                         mess.append([])
                         if abs(p.pl[1]) == i+1:     #Finding p's opposite point
-                            dP = p.pl[0]
+                            dP = int(p.pl[0])
                             Op = p.points[0]
                         else:
-                            dP = p.pl[1]
+                            dP = int(p.pl[1])
                             Op = p.points[1]
                         Op.a = 1
                         for d in range(0,n):    #going through each dimension to find the points that are on the same face as p
@@ -185,7 +198,7 @@ def recon(res,U):
                                         # Testing the point pp to see if could be part of the face
                                         if pp in lowP or pp in highP or pp.points[z] in lowP or pp.points[z] in highP:
                                             continue
-                                        if ((p.coord[abs(pp.pl[z])-1] > pp.coord[abs(pp.pl[z])-1] or p.coord[abs(pp.pl[z])-1] < pp.points[z].coord[abs(pp.pl[z])-1]) and pp.pl[z] > 0) or ((p.coord[abs(pp.pl[z])-1] < pp.coord[abs(pp.pl[z])-1] or p.coord[abs(pp.pl[z])-1] > pp.points[z].coord[abs(pp.pl[z])-1]) and pp.pl[z] < 0):
+                                        if ((p.coord[int(abs(pp.pl[z])-1)] > pp.coord[int(abs(pp.pl[z])-1)] or p.coord[int(abs(pp.pl[z])-1)] < pp.points[z].coord[int(abs(pp.pl[z])-1)]) and pp.pl[z] > 0) or ((p.coord[int(abs(pp.pl[z])-1)] < pp.coord[int(abs(pp.pl[z])-1)] or p.coord[int(abs(pp.pl[z])-1)] > pp.points[z].coord[int(abs(pp.pl[z])-1)]) and pp.pl[z] < 0):
                                             continue
                                         if low > pp.coord[d] or high < pp.coord[d]:
                                             continue
@@ -295,9 +308,9 @@ def recon(res,U):
                                             newP.coord[i] = p.coord[i] + 1
                                         ###################### Mini walkBox################
                                         po = copy.deepcopy(newP)
-                                        while d2(po,U) != 0:
+                                        while d2(po) != 0:
                                             clark = 0
-                                            po.coord[i] = po.coord[i] + s*d2(po,U)
+                                            po.coord[i] = po.coord[i] + s*d2(po)
                                         for side in range(-1,2,2):
                                             dT = d
                                             back = 0
@@ -305,9 +318,9 @@ def recon(res,U):
                                             pi = copy.deepcopy(pb)
                                             pi.coord[i] -= s*1
                                             while True:
-                                                pb.coord[dT] += side*d2(pi,U)
-                                                pi.coord[dT] += side*d2(pi,U)
-                                                if d2(pi,U) == 0 and d2(pb,U) == 0:
+                                                pb.coord[dT] += side*d2(pi)
+                                                pi.coord[dT] += side*d2(pi)
+                                                if d2(pi) == 0 and d2(pb) == 0:
                                                     if back == 1:
                                                         pb.pl = [s*(i+1),side*(d+1)]
                                                         tempo[-1].points[0] = pb
@@ -320,10 +333,10 @@ def recon(res,U):
                                                     side = -s
                                                     back = 1
 
-                                                if d2(pb,U) != 0:
-                                                    while d2(pb,U) != 0:
-                                                        pb.coord[dT] -= side*d2(pb,U)
-                                                        pi.coord[dT] -= side*d2(pb,U)
+                                                if d2(pb) != 0:
+                                                    while d2(pb) != 0:
+                                                        pb.coord[dT] -= side*d2(pb)
+                                                        pi.coord[dT] -= side*d2(pb)
                                                     if back == 1:
                                                         pb.pl = [s*(i+1),side*(d+1),0]
                                                         tempo[-1].points[0] = pb
@@ -385,9 +398,10 @@ def recon(res,U):
                 plain[x.index(y)] = mess
                 for MESS in mess:
                     Faces += MESS
-
             #going through each face to find the borders
             # print("part3")
+            # print(x)
+            # print("waaw")
             for y in x:
                 Bo = Box(n)          #intinalize the box and set half the ith borders
                 if s < 0:
@@ -399,6 +413,7 @@ def recon(res,U):
                 temp = 10000000000000          #temp represents the potential second ith border in case we faild to find the other side because of an inter section(the other face is inside another box)
                 tempC = 0
                 for lP in range(0,len(plain[x.index(y)])):
+
                     B = copy.deepcopy(Bo)
                     #going through the points in the face to get the borders
                     for p in plain[x.index(y)][lP]:
@@ -408,29 +423,29 @@ def recon(res,U):
                         if 0 not in p.points and 0 not in p.pl:
                             if abs(p.pl[1]) == i+1:
                                 if 0 not in p.points[1].pl and tempC != 1:
-                                    temp = p.points[1].coord[abs(p.pl[1])-1]
+                                    temp = p.points[1].coord[int(abs(p.pl[1])-1)]
                                     tempC = 1
-                                elif abs(p.points[1].coord[abs(p.pl[1])-1]-p.coord[abs(p.pl[1])-1])<abs(temp-p.coord[abs(p.pl[1])-1]):
+                                elif abs(p.points[1].coord[int(abs(p.pl[1])-1)]-p.coord[int(abs(p.pl[1])-1)])<abs(temp-p.coord[abs(int(abs(p.pl[1])-1))]):
                                     if 0 not in p.points[1].pl:
-                                        temp = p.points[1].coord[abs(p.pl[1])-1]
+                                        temp = p.points[0].coord[int(abs(p.pl[0])-1)]
                                     elif 0 in p.points[1].pl and tempC != 1:
-                                        temp = p.points[1].coord[abs(p.pl[1])-1]
+                                        temp = p.points[1].coord[int(abs(p.pl[1])-1)]
                                         tempC = 0.5
                             else:
                                 if 0 not in p.points[0].pl and tempC != 1:
-                                    temp = p.points[0].coord[abs(p.pl[0])-1]
+                                    temp = p.points[0].coord[int(abs(p.pl[0])-1)]
                                     tempC = 1
-                                elif abs(p.points[0].coord[abs(p.pl[0])-1]-p.coord[abs(p.pl[0])-1])<abs(temp-p.coord[abs(p.pl[0])-1]):
+                                elif abs(p.points[0].coord[int(abs(p.pl[0])-1)]-p.coord[int(abs(p.pl[0])-1)])<abs(temp-p.coord[int(abs(p.pl[0])-1)]):
                                     if 0 not in p.points[0].pl:
-                                        temp = p.points[1].coord[abs(p.pl[1])-1]
+                                        temp = p.points[1].coord[int(abs(p.pl[1])-1)]
                                     elif 0 in p.points[0].pl and tempC != 1:
-                                        temp = p.points[0].coord[abs(p.pl[0])-1]
+                                        temp = p.points[0].coord[int(abs(p.pl[0])-1)]
                                         tempC = 0.5
                         # find the dimension this points limits (ex: if p.pl = [-2,1] and i = 1 then p is in face in the 1 dimension and is the left limit in the 2 dimension)
                         if p.pl[1] == s*(i+1):
-                            z = abs(p.pl[0])-1
+                            z = int(abs(p.pl[0])-1)
                         else:
-                            z = abs(p.pl[1])-1
+                            z = int(abs(p.pl[1])-1)
 
                         # check if its left limit or a right limit
                         if z+1 in p.pl or -(z+1) in p.pl:
@@ -496,122 +511,32 @@ def recon(res,U):
                     if bad == 0:
                         fin.append(copy.deepcopy(B))   #If it doesn't match any of the end result boxes we can add it to the list
             s -= 2  # we went through all the s = 1 faces now we move to s = -1
-    # print("part4")
-    fixBox = []
-    for y in x2:
-        for p1 in inter[x2.index(y)]:
-            saveD = -1
-            faces = 0
-            for b in fin:
-                if b.isInBox(p1) == 0.5:
-                    faces +=1
-                    notIt = b
-            if faces <2:
-                for dk in range(0,n):
-                    if p1.coord[dk] == notIt.Borders[dk][0] or p1.coord[dk] == notIt.Borders[dk][1]:
-                        saveD = dk
-                        break
-                if saveD != i:
-                    continue
-                if abs(p1.pl[0]) == saveD+1:
-                    OpI = p1.points[0]
-                    zK = p1.pl[1]
-                else:
-                    OpI = p1.points[1]
-                    zK = p1.pl[0]
-                MoveP = copy.deepcopy(p1)
-                done1 = 0
-                while True:
-                    MoveP.coord[abs(zK)-1] -= abs(zK)/zK
-                    if d2(MoveP,U) == 0:
-                        break
-                    for b1 in fin:
-                        if b1 not in fixBox:
-                            if b1.isInBox(MoveP) == 1:
-                                MoveP.coord[abs(zK)-1] += abs(zK)/zK
-                                done1 = 1
-                                # print(b1.Borders)
-                                break
-                    if done1 == 1:
-                        break
-                B = Box(n)
-                Brok = 0
-                if zK > 0:
-                    B.Borders[abs(zK)-1] = [MoveP.coord[abs(zK)-1],p1.coord[abs(zK)-1]]
-                else:
-                    B.Borders[abs(zK)-1] = [p1.coord[abs(zK)-1],MoveP.coord[abs(zK)-1]]
-                for bor in range(0,n):
-                    if bor == abs(zK)-1:
-                        continue
-                    B.Borders[bor] = [-1,100000]
-                for p2 in res:
-                    if 0 in p2.pl:
-                        if B.isInBox(p2) == 1:
-                            lot = []
-                            if abs(p2.pl[0]) == i+1:
-                                lot = [p2.pl[0],p2.pl[1]]
-                            else:
-                                lot = [p2.pl[1],p2.pl[0]]
-                            for p2pl in lot:
-                                if abs(p2pl)-1 == abs(zK)-1:
-                                    continue
-                                if abs(p2pl)-1 == i:
-                                    if p2pl > 0:
-                                        if p2.coord[abs(p2pl)-1] > B.Borders[abs(p2pl)-1][0] and p2.coord[abs(p2pl)-1] <= p1.coord[abs(p2pl)-1]:
-                                            B.Borders[abs(p2pl)-1][0] = p2.coord[abs(p2pl)-1] - 1
-                                    else:
-                                        if p2.coord[abs(p2pl)-1] < B.Borders[abs(p2pl)-1][1] and p2.coord[abs(p2pl)-1] >= OpI.coord[abs(p2pl)-1]:
-                                            B.Borders[abs(p2pl)-1][1] = p2.coord[abs(p2pl)-1] + 1
-                                else:
-                                    if p2pl < 0:
-                                        if p2.coord[abs(p2pl)-1] > B.Borders[abs(p2pl)-1][0] and p2.coord[abs(p2pl)-1] < p1.coord[abs(p2pl)-1]:
-                                            B.Borders[abs(p2pl)-1][0] = p2.coord[abs(p2pl)-1]
-                                    else:
-                                        if p2.coord[abs(p2pl)-1] < B.Borders[abs(p2pl)-1][1] and p2.coord[abs(p2pl)-1] > p1.coord[abs(p2pl)-1]:
-                                            B.Borders[abs(p2pl)-1][1] = p2.coord[abs(p2pl)-1]
-                for BOR in B.Borders:
-                    if -1 in BOR or 100000 in BOR:
-                        Brok = 1
-                        break
-                if Brok == 0:
-                    fin.append(B)
-                    fixBox.append(B)
-
-    for box in fin:
-        save = 0
-        change = 0
-        for i in range(0,n):
-            for z in range(0,2):
-                if box.change[i][z] == 0.5:
-                    save = box.Borders[i][z]
-                    box.Borders[i][z] = z*100
-                    change = 0.5
-                    for p in res:
-                        if 0 in p.pl and (i+1 in p.pl or -i-1 in p.pl):
-                            faces = 0
-                            for b in fin:
-                                if b.isInBox(p) == 0.5:
-                                    faces +=1
-
-                            if faces <2:
-                                    if box.isInBox(p) == 1:
-                                        box.Borders[i][z] = p.coord[i]
-                                        change = 1
-                        if 0 not in p.pl:
-                            if box.isInBox(p) == 1:
-                                box.Borders[i][z] = p.coord[i]
-                if change == 0.5:
-                    change = 0
-                    box.Borders[i][z] = save
-                    save = 0
-    for box in fin:
-        for i in range(0,n):
-            if box.Borders[i][0] >= box.Borders[i][1]:
-                fin.remove(box)
-                break
     return fin
 
 def sample(U,N):
+    # n = U.dim
+    # result = []
+    # Area = []
+    # total = 0
+    # for boxes in U.Boxes:
+    #     a = 1
+    #     for i in range(0,n):
+    #         a *= boxes.Borders[i][1] - boxes.Borders[i][0]
+    #     Area.append(a)
+    #     total += a
+
+    # for boxes in U.Boxes:
+    #     nbPoints = int(N*Area[U.Boxes.index(boxes)]/total + 1)
+    #     for i in range(0,nbPoints):
+    #         bre = 0
+    #         p = point(n)
+    #         for j in range(0,n):
+    #             if float(boxes.Borders[j][0]+1) >= float(boxes.Borders[j][1])-1:
+    #                 p.coord[j] = boxes.Borders[j][0] + 0.5
+    #             else:
+    #                 p.coord[j] = random.uniform(boxes.Borders[j][0]+1,boxes.Borders[j][1]-1)
+    #         if bre == 0:
+    #             result.append(p)
     n = U.dim
     result = []
     Area = []
@@ -633,12 +558,6 @@ def sample(U,N):
                     p.coord[j] = boxes.Borders[j][0] + 0.5
                 else:
                     p.coord[j] = random.randint(boxes.Borders[j][0]+1,boxes.Borders[j][1]-1)
-            # p.b = 1
-            # for i in result:
-            #     if i.samePoint(p) == 1:
-            #         bre = 1
-            #         # print("same point")
-            #         break
             if bre == 0:
                 result.append(p)
     return result
@@ -649,8 +568,8 @@ def buildset(n,N,x,y):
         No = 0
         B = Box(n)
         for j in range(0,n):
-            B0 = random.randint(x,y-5)
-            B1 = random.randint(B0+5,y)
+            B0 = random.uniform(x,y-5)
+            B1 = random.uniform(B0+5,y)
             B.Borders[j] = [B0,B1]
         for i in U.Boxes:
             if i.redundant(B) == True:
@@ -694,10 +613,10 @@ def sampleC(U,N):
             bre = 0
             p = point(n)
             for j in range(0,n):
-                if int(boxes.Borders[j][0]+1) >= int(boxes.Borders[j][1])-1:
+                if float(boxes.Borders[j][0]+1) >= float(boxes.Borders[j][1])-1:
                     p.coord[j] = boxes.Borders[j][0] + 0.5
                 else:
-                    p.coord[j] = random.randint(boxes.Borders[j][0]+1,boxes.Borders[j][1]-1)
+                    p.coord[j] = random.uniform(boxes.Borders[j][0]+1,boxes.Borders[j][1]-1)
             # p.b = 1
             # for i in result:
             #     if i.samePoint(p) == 1:
@@ -716,11 +635,114 @@ underA = 0
 total = 0
 avrgWalk = 0
 avrgRecon = 0
-while n != 1:
+Ocount = 0
+
+
+B = Box(10)
+B.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20]]
+
+ALL = space(10)
+ALL.addBoxes(B)
+
+B1 = Box(10)
+B2 = Box(10)
+B3 = Box(10)
+B4 = Box(10)
+B5 = Box(10)
+B6 = Box(10)
+B7 = Box(10)
+B8 = Box(10)
+B9 = Box(10)
+B10 = Box(10)
+B11 = Box(10)
+B12 = Box(10)
+B13 = Box(10)
+B14 = Box(10)
+B15 = Box(10)
+B16 = Box(10)
+B17 = Box(10)
+
+B1.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,3],[10,20],[10,20],[-20,20],[-20,20],[-20,20]]
+B2.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,3],[-20,3],[10,20],[-20,20],[-20,20],[-20,20]]
+B3.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[10,20],[-20,3],[-20,3],[-20,20],[-20,20],[-20,20]]
+B4.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,3],[-20,3],[-20,3],[-20,20],[-20,20],[-20,20]]
+B5.Borders = [[-20,20],[-20,20],[0,10],[-20,20],[-20,3],[10,20],[-20,20],[-20,20],[-20,20],[-20,20]]
+B6.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[10,20],[10,20],[-20,3],[-20,20],[-20,20],[-20,20]]
+B7.Borders = [[-20,20],[0,10],[-20,20],[-20,20],[-20,20],[10,20],[-20,3],[-20,20],[-20,20],[-20,20]]
+B8.Borders = [[-20,20],[-20,20],[0,10],[-20,20],[-20,3],[-20,3],[-20,20],[-20,20],[-20,20],[-20,20]]
+B9.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,3],[10,20],[-20,3],[-20,20],[-20,20],[-20,20]]
+B10.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[10,20],[-20,3],[10,20],[-20,20],[-20,20],[-20,20]]
+B11.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[10,20],[10,20],[10,20],[-20,20],[-20,20],[-20,20]]
+B12.Borders = [[-20,20],[0,10],[-20,20],[-20,20],[-20,20],[-20,3],[10,20],[-20,20],[-20,20],[-20,20]]
+B13.Borders = [[-20,20],[-20,20],[0,10],[-20,20],[10,20],[-20,3],[-20,20],[-20,20],[-20,20],[-20,20]]
+B14.Borders = [[-20,20],[0,10],[-20,20],[-20,20],[-20,20],[-20,3],[-20,3],[-20,20],[-20,20],[-20,20]]
+B15.Borders = [[-20,20],[-20,20],[0,10],[-20,20],[10,20],[10,20],[-20,20],[-20,20],[-20,20],[-20,20]]
+B16.Borders = [[-20,20],[0,10],[-20,20],[-20,20],[-20,20],[10,20],[10,20],[-20,20],[-20,20],[-20,20]]
+B17.Borders = [[-20,20],[0,10],[0,10],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20]]
+
+Ex = space(10)
+Ex.Boxes = [B1,B2,B3,B4,B5,B6,B7,B8,B9,B10,B11,B12,B13,B14,B15,B16,B17]
+
+start = timer()
+Sam = sample(Ex, 10000) #+ sample(ALL, 100)
+end = timer()
+print("sample Time:", end - start)
+
+# result = []
+# start = timer()
+# print("|------------------------------WalkBox---------------------------------------------|")
+# for i in Sam:
+#     if d2(i) > 0:
+#         print(Sam.index(i))
+#         result += walkBox(i)
+# end = timer()
+# print("|----------------------------------------------------------------------------------|")
+# print("walkBox Time:", end - start)
+# avrgWalk += end - start
+# print("|----------------------------------------------------------------------------------|")
+# print("recon:")
+# rec = space(10)
+# start = timer()
+# rec.Boxes = recon(result)
+# end = timer()
+# print("|----------------------------------------------------------------------------------|")
+# print("recon Time:", end - start)
+# avrgWalk += end - start
+# print("|----------------------------------------------------------------------------------|")
+
+
+# Sam1 = sample(rec, 1000)
+
+# badp = 0
+# for i in Sam1:
+#     if d2(i) < 0:
+#         print("BAD POINT")
+#         print(i.coord)
+#         print(d2(i))
+#         badp +=1
+# badp2 = 0
+
+# Sam = sample(ALL, 1000)
+# for i in Sam:
+#     if d2(i) > 0 and d1(i,rec) < 0:
+#         print("BAD POINT")
+#         print(i.coord)
+#         badp2 +=1
+
+# print("OVER BAD POINTS: " + str(badp))
+# print("UNDER BAD POINTS: " + str(badp2))
+# print("FINAL:")
+# for i in rec.Boxes:
+#     print(i)
+#     pass
+
+
+
+while n != 0:
     total += 1
     print("llllllllllllllllllllllllllllllllllllllllllllllllllllllllllll")
     ####################################################################################################### Random genarator
-    n = 500
+    n = 3
     N = 10
     S = buildset(n,10,0,100)
     print("Actual Boxes:")
