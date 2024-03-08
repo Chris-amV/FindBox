@@ -9,6 +9,8 @@ import random
 from timeit import default_timer as timer
 from model import d2
 
+#THIS FILE IS USED TO VISUALIZE THE BOXES AND THE POINTS
+
 def sample(U,N):
     n = U.dim
     result = []

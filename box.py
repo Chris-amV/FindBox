@@ -5,6 +5,10 @@ from itertools import product, combinations
 from timeit import default_timer as timer
 
 global delta
+
+# THIS FILE IS USED TO CREATE THE BOXES AND THE POINTS CLASSES
+# ALSO THE "FACK" ORACLE FUNCTION
+
 delta = 0.001
 class point:
     def __init__(self,n):

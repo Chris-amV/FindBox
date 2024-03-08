@@ -17,6 +17,8 @@ from box import point
 from typing import Callable, Generic, Iterable, Iterator, Sequence, Tuple, TypeVar, Union
 import time
 
+# THIS FILE CONTAINS THE REAL FORMULAS AND THE ORECAL FUNCTION
+
 T = TypeVar("T")
 def _time(func: Callable[[], T]) -> Tuple[float, T]:
     start_time = time.perf_counter()
@@ -26,6 +28,7 @@ def _time(func: Callable[[], T]) -> Tuple[float, T]:
 
     return duration, result
 
+# THE FORMULAS
 
 phi = r"always (x1 >= 3 and x1 <= 10)"
 # phi = r"always !(a >= -1.6 and a <= -1.4  and b >= -1.1 and b <= -0.9)"
@@ -35,6 +38,7 @@ phi100= r"(always[0,1] (eventually[30,31] (x1 >= 3 and x1 <= 10)) -> (always[0,1
 
 specification = RTAMTDense(phi1, {"x1":0})
 
+# THE ORECAL FUNCTION
 def d2(p):
     point_coord = [p.coord]
     point_time = []

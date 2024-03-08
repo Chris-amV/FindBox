@@ -9,7 +9,7 @@ import random
 from timeit import default_timer as timer
 from model import d2
 
-
+## THIS IS THE CODE WITH THE REAL ORACLE FUNCTION (USES THE REAL FORMULA IN MODEL.PY)
 
 def walkBox(p,f = -1):
     global Ocount   #Ocount is used to count the number of thime the oracle is called
@@ -644,220 +644,94 @@ B.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20
 ALL = space(10)
 ALL.addBoxes(B)
 
-B1 = Box(10)
-B2 = Box(10)
-B3 = Box(10)
-B4 = Box(10)
-B5 = Box(10)
-B6 = Box(10)
-B7 = Box(10)
-B8 = Box(10)
-B9 = Box(10)
-B10 = Box(10)
-B11 = Box(10)
-B12 = Box(10)
-B13 = Box(10)
-B14 = Box(10)
-B15 = Box(10)
-B16 = Box(10)
-B17 = Box(10)
+# B1 = Box(10)
+# B2 = Box(10)
+# B3 = Box(10)
+# B4 = Box(10)
+# B5 = Box(10)
+# B6 = Box(10)
+# B7 = Box(10)
+# B8 = Box(10)
+# B9 = Box(10)
+# B10 = Box(10)
+# B11 = Box(10)
+# B12 = Box(10)
+# B13 = Box(10)
+# B14 = Box(10)
+# B15 = Box(10)
+# B16 = Box(10)
+# B17 = Box(10)
 
-B1.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,3],[10,20],[10,20],[-20,20],[-20,20],[-20,20]]
-B2.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,3],[-20,3],[10,20],[-20,20],[-20,20],[-20,20]]
-B3.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[10,20],[-20,3],[-20,3],[-20,20],[-20,20],[-20,20]]
-B4.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,3],[-20,3],[-20,3],[-20,20],[-20,20],[-20,20]]
-B5.Borders = [[-20,20],[-20,20],[0,10],[-20,20],[-20,3],[10,20],[-20,20],[-20,20],[-20,20],[-20,20]]
-B6.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[10,20],[10,20],[-20,3],[-20,20],[-20,20],[-20,20]]
-B7.Borders = [[-20,20],[0,10],[-20,20],[-20,20],[-20,20],[10,20],[-20,3],[-20,20],[-20,20],[-20,20]]
-B8.Borders = [[-20,20],[-20,20],[0,10],[-20,20],[-20,3],[-20,3],[-20,20],[-20,20],[-20,20],[-20,20]]
-B9.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,3],[10,20],[-20,3],[-20,20],[-20,20],[-20,20]]
-B10.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[10,20],[-20,3],[10,20],[-20,20],[-20,20],[-20,20]]
-B11.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[10,20],[10,20],[10,20],[-20,20],[-20,20],[-20,20]]
-B12.Borders = [[-20,20],[0,10],[-20,20],[-20,20],[-20,20],[-20,3],[10,20],[-20,20],[-20,20],[-20,20]]
-B13.Borders = [[-20,20],[-20,20],[0,10],[-20,20],[10,20],[-20,3],[-20,20],[-20,20],[-20,20],[-20,20]]
-B14.Borders = [[-20,20],[0,10],[-20,20],[-20,20],[-20,20],[-20,3],[-20,3],[-20,20],[-20,20],[-20,20]]
-B15.Borders = [[-20,20],[-20,20],[0,10],[-20,20],[10,20],[10,20],[-20,20],[-20,20],[-20,20],[-20,20]]
-B16.Borders = [[-20,20],[0,10],[-20,20],[-20,20],[-20,20],[10,20],[10,20],[-20,20],[-20,20],[-20,20]]
-B17.Borders = [[-20,20],[0,10],[0,10],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20]]
+# B1.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,3],[10,20],[10,20],[-20,20],[-20,20],[-20,20]]
+# B2.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,3],[-20,3],[10,20],[-20,20],[-20,20],[-20,20]]
+# B3.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[10,20],[-20,3],[-20,3],[-20,20],[-20,20],[-20,20]]
+# B4.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,3],[-20,3],[-20,3],[-20,20],[-20,20],[-20,20]]
+# B5.Borders = [[-20,20],[-20,20],[0,10],[-20,20],[-20,3],[10,20],[-20,20],[-20,20],[-20,20],[-20,20]]
+# B6.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[10,20],[10,20],[-20,3],[-20,20],[-20,20],[-20,20]]
+# B7.Borders = [[-20,20],[0,10],[-20,20],[-20,20],[-20,20],[10,20],[-20,3],[-20,20],[-20,20],[-20,20]]
+# B8.Borders = [[-20,20],[-20,20],[0,10],[-20,20],[-20,3],[-20,3],[-20,20],[-20,20],[-20,20],[-20,20]]
+# B9.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,3],[10,20],[-20,3],[-20,20],[-20,20],[-20,20]]
+# B10.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[10,20],[-20,3],[10,20],[-20,20],[-20,20],[-20,20]]
+# B11.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[10,20],[10,20],[10,20],[-20,20],[-20,20],[-20,20]]
+# B12.Borders = [[-20,20],[0,10],[-20,20],[-20,20],[-20,20],[-20,3],[10,20],[-20,20],[-20,20],[-20,20]]
+# B13.Borders = [[-20,20],[-20,20],[0,10],[-20,20],[10,20],[-20,3],[-20,20],[-20,20],[-20,20],[-20,20]]
+# B14.Borders = [[-20,20],[0,10],[-20,20],[-20,20],[-20,20],[-20,3],[-20,3],[-20,20],[-20,20],[-20,20]]
+# B15.Borders = [[-20,20],[-20,20],[0,10],[-20,20],[10,20],[10,20],[-20,20],[-20,20],[-20,20],[-20,20]]
+# B16.Borders = [[-20,20],[0,10],[-20,20],[-20,20],[-20,20],[10,20],[10,20],[-20,20],[-20,20],[-20,20]]
+# B17.Borders = [[-20,20],[0,10],[0,10],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20]]
 
-Ex = space(10)
-Ex.Boxes = [B1,B2,B3,B4,B5,B6,B7,B8,B9,B10,B11,B12,B13,B14,B15,B16,B17]
+# Ex = space(10)
+# Ex.Boxes = [B1,B2,B3,B4,B5,B6,B7,B8,B9,B10,B11,B12,B13,B14,B15,B16,B17]
 
 start = timer()
-Sam = sample(Ex, 10000) #+ sample(ALL, 100)
+Sam =  sample(ALL, 1000)
 end = timer()
 print("sample Time:", end - start)
 
-# result = []
-# start = timer()
-# print("|------------------------------WalkBox---------------------------------------------|")
-# for i in Sam:
-#     if d2(i) > 0:
-#         print(Sam.index(i))
-#         result += walkBox(i)
-# end = timer()
-# print("|----------------------------------------------------------------------------------|")
-# print("walkBox Time:", end - start)
-# avrgWalk += end - start
-# print("|----------------------------------------------------------------------------------|")
-# print("recon:")
-# rec = space(10)
-# start = timer()
-# rec.Boxes = recon(result)
-# end = timer()
-# print("|----------------------------------------------------------------------------------|")
-# print("recon Time:", end - start)
-# avrgWalk += end - start
-# print("|----------------------------------------------------------------------------------|")
+result = []
+start = timer()
+print("|------------------------------WalkBox---------------------------------------------|")
+for i in Sam:
+    if d2(i) > 0:
+        print(Sam.index(i))
+        result += walkBox(i)
+end = timer()
+print("|----------------------------------------------------------------------------------|")
+print("walkBox Time:", end - start)
+avrgWalk += end - start
+print("|----------------------------------------------------------------------------------|")
+print("recon:")
+rec = space(10)
+start = timer()
+rec.Boxes = recon(result)
+end = timer()
+print("|----------------------------------------------------------------------------------|")
+print("recon Time:", end - start)
+avrgWalk += end - start
+print("|----------------------------------------------------------------------------------|")
 
 
-# Sam1 = sample(rec, 1000)
+Sam1 = sample(rec, 1000)
 
-# badp = 0
-# for i in Sam1:
-#     if d2(i) < 0:
-#         print("BAD POINT")
-#         print(i.coord)
-#         print(d2(i))
-#         badp +=1
-# badp2 = 0
+badp = 0
+for i in Sam1:
+    if d2(i) < 0:
+        print("BAD POINT")
+        print(i.coord)
+        print(d2(i))
+        badp +=1
+badp2 = 0
 
-# Sam = sample(ALL, 1000)
-# for i in Sam:
-#     if d2(i) > 0 and d1(i,rec) < 0:
-#         print("BAD POINT")
-#         print(i.coord)
-#         badp2 +=1
+Sam = sample(ALL, 1000)
+for i in Sam:
+    if d2(i) > 0 and d1(i,rec) < 0:
+        print("BAD POINT")
+        print(i.coord)
+        badp2 +=1
 
-# print("OVER BAD POINTS: " + str(badp))
-# print("UNDER BAD POINTS: " + str(badp2))
-# print("FINAL:")
-# for i in rec.Boxes:
-#     print(i)
-#     pass
-
-
-
-while n != 0:
-    total += 1
-    print("llllllllllllllllllllllllllllllllllllllllllllllllllllllllllll")
-    ####################################################################################################### Random genarator
-    n = 3
-    N = 10
-    S = buildset(n,10,0,100)
-    print("Actual Boxes:")
-    for i in S.Boxes:
-        print("--------------------")
-        print(i)
-        pass
-
-    points = sampleC(S,N)
-    # points = sample(S,N)
-    print(len(points))
-    result = []
-    coord = []
-    for i in range(0,n):
-        coord.append([])
-    coupoi = 0
-    start = timer()
-    print("|------------------------------WalkBox---------------------------------------------|")
-    Ocount = 0
-    for i in points:
-        resultB = []
-        print("\rwalking: " + str(int(coupoi*100/len(points))) +"% ", end="")
-        z = 0
-        for hel in range(1,n):
-            reo = 0
-            z = 0
-            resultB = []
-            resultB = walkBox(i,S,hel)
-            while z < len(resultB) and len(coord[hel]) != 0:
-                y = 0
-                while y<len(coord[hel]):
-                    if coord[hel][y].samePoint(resultB[z]) and coord[hel][y].pl == resultB[z].pl:
-                        reo = 1
-                        break
-                    else:
-                        backup = result[y].points[0]
-                        while result[y] != backup:
-                            y += 1
-                        y += 1
-                if reo == 1:
-                    break
-                else:
-                    z +=1
-            if reo == 0:
-                coord[hel] += resultB
-                result += resultB
-        # resultB = walkBox(i,S)
-        coupoi += 1
-        if coupoi == len(points)+1:
-            coupoi -=1
-        pass
-    end = timer()
-    print("Ocount = {}".format(Ocount))
-    print("\rDone           ")
-    print("|----------------------------------------------------------------------------------|")
-    print("walkBox Time:", end - start)
-    avrgWalk += end - start
-    print("|----------------------------------------------------------------------------------|")
-    print("\rRecon started.", end="")
-    rec = space(n)
-    start = timer()
-    rec.Boxes = recon(copy.deepcopy(result),S)
-    end = timer()
-    print("\rRecon ended.  ")
-    print("|----------------------------------------------------------------------------------|")
-    print("Reconstruction Time:", end - start)
-    avrgRecon += end - start
-    print("|----------------------------------------------------------------------------------|")
-    print("FINAL:")
-    for i in rec.Boxes:
-        print(i)
-        pass
-
-    N1 = 100000
-    points1 = sample(rec,N1)
-    count1 = 0
-    print("checking points from rec in S:")
-    BADP = []
-    for i in points1:
-        if d2(i,S) < 0:
-            count1 += 1
-            BADP.append(i)
-        pass
-    print(count1*100/N1)
-    overA += count1*100/N1
-
-    count = 0
-    points = sample(S,N1)
-    print("checking points from S in rec:")
-    for i in points:
-        if d2(i,rec) < 0:
-            count += 1
-        pass
-    print(count*100/N1)
-    underA += count*100/N1
-
-    if count1 != 0:
-        print("OVER ESTIMATION")
-        over += 1
-    if count != 0:
-        print("UNDER ESTIMATION")
-        under += 1
-    print("############################################################")
-    print("over: "+str(over)+ " / "+ str(over*100/total)+ "%")
-    print("overA: "+str(overA/total)+ "%")
-    print("under: "+str(under)+ " / "+ str(under*100/total)+ "%")
-    print("underA: "+str(underA/total)+ "%")
-    print("total: "+str(total))
-    print("Avrage walkBox time: " + str(avrgWalk/total) + "s")
-    print("Avrage recon time: " + str(avrgRecon/total) + "s")
-    print("############################################################")
-
-    # points = sample(rec,1000)
-
-    # for i in range(0,len(points)):
-    #     print(points[i].coord)
-
-
+print("OVER BAD POINTS: " + str(badp))
+print("UNDER BAD POINTS: " + str(badp2))
+print("FINAL:")
+for i in rec.Boxes:
+    print(i)
+    pass

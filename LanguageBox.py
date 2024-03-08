@@ -8,7 +8,7 @@ import copy
 import random
 from timeit import default_timer as timer
 
-
+# THIS IS THE CODE WITH THE GENERATED FORMULA
 
 def walkBox(p,U,f = -1):
     global Ocount   #Ocount is used to count the number of thime the oracle is called
