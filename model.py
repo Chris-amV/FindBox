@@ -30,13 +30,15 @@ def _time(func: Callable[[], T]) -> Tuple[float, T]:
 
 # THE FORMULAS
 
-phi = r"always (x1 >= 3 and x1 <= 10)"
+phi = r"(always[1,2] (eventually[3,4] (x1 >= 3 and x1 <= 10)) -> (x1 >= 0 and x1 <= 10)) and (always (x1 >= -20 and x1 <= 20))"
 # phi = r"always !(a >= -1.6 and a <= -1.4  and b >= -1.1 and b <= -0.9)"
 phi1 = r"(always[1,2] (eventually[3,4] (x1 >= 3 and x1 <= 10)) -> (x1 >= 0 and x1 <= 10)) and (always (x1 >= -20 and x1 <= 20))"
 phi2 = r"(always[0,1] (eventually[7,8] (x1 >= 3 and x1 <= 10)) -> (always[0,1] (eventually[14,15] (x1 >= 0 and x1 <= 10)))) and (always (x1 >= -20 and x1 <= 20))"
 phi100= r"(always[0,1] (eventually[30,31] (x1 >= 3 and x1 <= 10)) -> (always[0,1] (eventually[60,70] (x1 >= 0 and x1 <= 10)))) and (always (x1 >= -20 and x1 <= 20))"
+phi50 = r"(always (x1 >= -20 and x1 <= 3) -> (eventually (x1 >= 3 and x1 <= 45))) and (always (x1 >= -50 and x1 <= 50))"   
 
-specification = RTAMTDense(phi, {"x1":0})
+phi = r"(always[0,15] (x1 >=0 and x1<=2350)) and (always (x1 >= -2350 and x1 <= 2350))"
+specification = RTAMTDense(phi50, {"x1":0})
 
 # THE ORECAL FUNCTION
 def d2(p):

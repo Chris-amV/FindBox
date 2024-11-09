@@ -151,6 +151,33 @@ class Box:
                     dist = min(abs(x.coord[i] - self.Borders[i][0]),  abs(self.Borders[i][1] - x.coord[i]), dist)
             return s*dist
 
+    def minDistD(self,x):
+        coord = 0
+        dist = 10000000
+        if self.dim != x.dim:
+            return "doesn't work!"
+        else:
+            s = -1
+            if self.isInBox(x) == 1 or self.isInBox(x) == 0.5:
+                s = 1
+                for i in range(0,self.dim):
+                        dist = min(abs(x.coord[i] - self.Borders[i][0]),  abs(self.Borders[i][1] - x.coord[i]), dist)
+                        if dist == abs(x.coord[i] - self.Borders[i][0]):
+                            coord = -i-1
+                        if dist == abs(self.Borders[i][1] - x.coord[i]):
+                            coord = i+1
+            else:
+                for i in range(0,self.dim):
+                    if self.Borders[i][0] >= x.coord[i] or x.coord[i] >= self.Borders[i][1]:
+                        if abs(x.coord[i] - self.Borders[i][0]) < dist:
+                            dist = abs(x.coord[i] - self.Borders[i][0])
+                            coord = -i-1
+                        if abs(self.Borders[i][1] - x.coord[i]) < dist:
+                            dist = abs(self.Borders[i][1] - x.coord[i])
+                            coord = i+1
+
+            return s*dist, coord
+
     def __str__(self):
         result = ""
         for i in self.Borders:
@@ -199,3 +226,28 @@ def d1(x,U):
     for i in U.Boxes:
         dist = max(dist,i.minDist(x))
     return dist
+
+def d1D(x,U):
+    coord = 0
+    dist = -100000
+    for i in U.Boxes:
+        NewDist, coordTemp = i.minDistD(x)
+        dist = max(dist,NewDist)
+        if dist == NewDist:
+            coord = coordTemp
+    return dist,coord
+
+
+# b1= Box(10)
+# b1.Borders = [[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10]]
+# s = space(10)
+# s.addBoxes(b1)
+# p1 = point(10)
+# p1.coord = [11,-1,-5,23,-2,6,7,8,8,7]
+
+# print(d1D(p1,s))
+# while d1D(p1,s)[0] < 0:
+#     dist, crd = d1D(p1,s)
+#     p1.coord[abs(crd)-1] -= abs(dist)*abs(crd)/crd
+#     print(p1.coord)
+# print(d1(p1,s))
