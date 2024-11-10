@@ -54,6 +54,7 @@ class point:
                 s = 100
                 if(0 in self.pl):
                     c = "black"
+        # print(self.coord)
         ax.scatter(self.coord[0], self.coord[1], self.coord[2], c=c, marker='o', s=s)
 
 class Box:

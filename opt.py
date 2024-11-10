@@ -53,32 +53,26 @@ B17.Borders = [[-20,20],[0,10],[0,10],[-20,20],[-20,20],[-20,20],[-20,20],[-20,2
 S = space(10)
 S.Boxes = [B1,B2,B3,B4,B5,B6,B7,B8,B9,B10,B11,B12,B13,B14,B15,B16,B17]
 
-ALL = space(10)
-B0 = Box(10)
-B0.Borders = [[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20],[-20,20]]
-ALL.Boxes = [B0]
 
 ptemp = point(10)
-test = sampleC(ALL,1000)
+test = sampleC(S,1000)
 results = []
 for i in test:
     count = 0
-    crd = 0
-    if d1(i,S) >= 0:
-        ptemp.coord = i.coord
-        while True:
-            track = ss_track(ptemp.coord)
-            x_nl = track.trajectory()
-            ptemp.coord = x_nl
-            if d1(ptemp,S) >= 0:
-                print("succesful tracking!",count)
-                break
-            else:
-                print("failed tracking! projecting...",count)
-                while d1D(ptemp,S)[0] < 0:
-                    dist, crd = d1D(ptemp,S)
-                    ptemp.coord[abs(crd)-1] -= abs(dist)*abs(crd)/crd
-                count += 1
+    ptemp.coord = i.coord
+    while True:
+        track = ss_track(ptemp.coord)
+        x_nl = track.trajectory()
+        ptemp.coord = x_nl
+        if d1(ptemp,S) >= 0:
+            print("succesful tracking!",count)
+            break
+        else:
+            print("failed tracking! projecting...",count)
+            while d1D(ptemp,S)[0] < 0:
+                dist, crd = d1D(ptemp,S)
+                ptemp.coord[abs(crd)-1] -= abs(dist)*abs(crd)/crd
+            count += 1
     results.append(count)
 
 print("Average number of iterations:",sum(results)/len(results))
