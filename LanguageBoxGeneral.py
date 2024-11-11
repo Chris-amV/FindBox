@@ -12,6 +12,7 @@ from model import d2
 ## THIS IS THE CODE WITH THE REAL ORACLE FUNCTION (USES THE REAL FORMULA IN MODEL.PY)
 
 def walkBox(p,f = -1):
+    # print(p.coord)
     global Ocount   #Ocount is used to count the number of thime the oracle is called
     corners = []
     n = p.dim-1
@@ -23,7 +24,7 @@ def walkBox(p,f = -1):
         pbO = copy.deepcopy(p)
         while d2(p) <= 0:         #if the point is outside the box
             Ocount += 1
-            print("bad point")
+            # print("bad point")
         Ocount += 1
         pb = copy.deepcopy(p)
         insideDis = d2(pb)
@@ -57,14 +58,19 @@ def walkBox(p,f = -1):
                 Ocount += 1
                 pb.coord[dir[0]] += s*dist1
                 pi.coord[dir[0]] += s*dist1
+                # print("pb: ", pb.coord)
 
                 # pb.coord[dir[0]] = round(pb.coord[dir[0]],5)
                 # pi.coord[dir[0]] = round(pi.coord[dir[0]],5)
 
                 distpb = d2(pb)
                 distpi = d2(pi)
+                # print("distpb: ", distpb)
+                # print("distpi: ", distpi)
+
                 Ocount += 1
                 if distpi <= 0+Er and distpi >= 0-Er and distpb <= 0+Er and distpb >= 0-Er:     #corner point has been reached
+                    # print("hi")
                     Ocount += 2
                     pr = copy.deepcopy(pb)
                     pr.pl = copy.deepcopy(dir)
@@ -81,12 +87,18 @@ def walkBox(p,f = -1):
                         corners[-2].points[1] = corners[-1]
 
 
-                if distpb > 0+Er or distpb < 0-Er:                         #intersection point has been reached
+                if distpb > 0+Er or distpb < 0-Er:
+                    batata = 0                        #intersection point has been reached
                     while distpb > 0+Er or distpb < 0-Er:              #moving the point back to the intersection point
                         pb.coord[dir[0]] -= s*distpb
                         pi.coord[dir[0]] -= s*distpb
                         distpb = d2(pb)
+                        # print("pb1: ", pb.coord)
+                        # print("distpb1: ", distpb)
                         Ocount += 1
+                        batata += 1
+                        if batata > 100:
+                            print("Error")
                     # pb.coord[dir[0]] = round(pb.coord[dir[0]],5)
                     # pi.coord[dir[0]] = round(pi.coord[dir[0]],5)
                     pr = copy.deepcopy(pb)
@@ -685,7 +697,7 @@ def FindBox(n,Box):
     # Ex.Boxes = [B1,B2,B3,B4,B5,B6,B7,B8,B9,B10,B11,B12,B13,B14,B15,B16,B17]
 
     start = timer()
-    Sam =  sample(ALL, 1000)
+    Sam =  sample(ALL, 100)
     end = timer()
     print("sample Time:", end - start)
 
@@ -757,9 +769,18 @@ def FindBox(n,Box):
 # B.Borders = [[-2350,2350]]*16
 # result = FindBox(16,B)
 
-B = Box(20)
-B.Borders = [[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60],[0,60]]
-result = FindBox(20,B)
+# B = Box(10)
+# B.Borders = [[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10]]
+# result = FindBox(10,B)
+# U = space(4)
+# U.addBoxes(B)
+# p = point(3)
+# p.coord = [10.0, 2, 9, 7, 3, 7, 6, 7, 2.0, 2]
+# print(d2(p))
+
+
+
+
 
 # p = point(2)
 # p.coord = [4,5]

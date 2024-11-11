@@ -159,7 +159,9 @@ class Box:
             return "doesn't work!"
         else:
             s = -1
-            if self.isInBox(x) == 1 or self.isInBox(x) == 0.5:
+            inB = self.isInBox(x)
+            # print(inB)
+            if inB == 1 or inB == 0.5:
                 s = 1
                 for i in range(0,self.dim):
                         dist = min(abs(x.coord[i] - self.Borders[i][0]),  abs(self.Borders[i][1] - x.coord[i]), dist)
@@ -169,7 +171,7 @@ class Box:
                             coord = i+1
             else:
                 for i in range(0,self.dim):
-                    if self.Borders[i][0] >= x.coord[i] or x.coord[i] >= self.Borders[i][1]:
+                    if self.Borders[i][0] > x.coord[i] or x.coord[i] > self.Borders[i][1]:
                         if abs(x.coord[i] - self.Borders[i][0]) < dist:
                             dist = abs(x.coord[i] - self.Borders[i][0])
                             coord = -i-1
@@ -178,6 +180,15 @@ class Box:
                             coord = i+1
 
             return s*dist, coord
+
+    def actDist(self,x):
+        dist = 0
+        for i in range(0,self.dim):
+            if self.Borders[i][0] > x.coord[i]:
+                dist += np.power(abs(x.coord[i] - self.Borders[i][0]),2)
+            elif x.coord[i] > self.Borders[i][1]:
+                dist += np.power(abs(x.coord[i] - self.Borders[i][1]),2)
+        return np.sqrt(dist)
 
     def __str__(self):
         result = ""
@@ -237,6 +248,22 @@ def d1D(x,U):
         if dist == NewDist:
             coord = coordTemp
     return dist,coord
+
+def closestBox(x,U):
+    dist = 10000000
+    box = Box(U.dim)
+    for i in U.Boxes:
+        if i.actDist(x) < dist:
+            dist = i.actDist(x)
+            box = i
+    return box
+
+def project(x,U):
+    B = closestBox(x,U)
+    while d1D(x,U)[0] < 0:
+        dist, crd= B.minDistD(x)
+        x.coord[abs(crd)-1] -= abs(dist)*abs(crd)/crd
+    return x
 
 
 # b1= Box(10)

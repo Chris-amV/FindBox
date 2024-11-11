@@ -37,19 +37,18 @@ phi2 = r"(always[0,1] (eventually[7,8] (x1 >= 3 and x1 <= 10)) -> (always[0,1] (
 phi100= r"(always[0,1] (eventually[30,31] (x1 >= 3 and x1 <= 10)) -> (always[0,1] (eventually[60,70] (x1 >= 0 and x1 <= 10)))) and (always (x1 >= -20 and x1 <= 20))"
 phi50 = r"(always (x1 >= -20 and x1 <= 3) -> (eventually (x1 >= 3 and x1 <= 45))) and (always (x1 >= -50 and x1 <= 50))"
 phi = r"(always[0,15] (x1 >=0 and x1<=2350)) and (always (x1 >= -2350 and x1 <= 2350))"
-phi = r"(eventually(x1 >=-10 and x1<=10)) and (always (x1 >= -50 and x1 <= 50))"
-
-phi = r"eventually[0,7] (x1 >= 5 and x1 <= 10) and eventually[5,15] (x1 >= 20 and x1 <= 25) and eventually[12,20] (x1 >= 50 and x1 <= 55) and always (x1 >= 0 and x1 <= 60)"
+phi = r"(eventually[3,5](x1 >=0 and x1<=3)) and (always (x1 >= 0 and x1 <= 10))"
 
 #### EXPERIMENTS FOR PAPER
-phi1 = r"always(x1 >= 0 and x1 <= 10) and always not (x1 >= 3 and x1 <= 5) and always(x1 >= -20 and x1 <= 20)"
-phi2 = r"eventually[0,7](x1 >= 3 and x1 <= 7) and always[7,10](x1 >=0 and x1 <= 3) and always(x1 >= -20 and x1 <= 20)"
-phi3 = r"always (eventually[0, 10] (x1 = 2) and eventually[0, 10] (x1 = 8)) and always (-20 <= x1 <= 20)"
-phi4 = r"eventually[0, 3] (x1 >= 0 and x1 <= 3) and eventually[3, 6] (x1 >= 3 and x1 <= 6) and eventually[6, 9] (x1 >= 6 and x1 <= 9) and always (-20 <= x1 <= 20)" 
+phi1 = r"(always(x1 >= 0 and x1 <= 10) and always not (x1 >= 3 and x1 <= 5)) and (always(x1 >= 0 and x1 <= 10))"
+phi2 = r"((eventually[0,7](x1 >= 0 and x1 <= 3)) and (always[8,10](x1 >=0 and x1 <= 3))) and (always(x1 >= 0 and x1 <= 10))"
+phi3 = r"((eventually[0, 10] (x1 >= 0 and x1 <= 3)) and (eventually[0, 10] (x1 >= 7 and x1 <= 10))) and (always(x1 >= 0 and x1 <= 10))"
+phi4 = r"((eventually[0, 3] (x1 >= 0 and x1 <= 2)) and (eventually[3, 6] (x1 >= 4 and x1 <= 6)) and (eventually[6, 9] (x1 >= 15 and x1 <= 17))) and (always(x1 >= 0 and x1 <= 20))"
 
-# Choose the specification to use
-phi = phi1
-specification = RTAMTDense(phi, {"x1":0})
+
+
+specification = RTAMTDense(phi3, {"x1":0})
+
 
 # THE ORECAL FUNCTION
 def d2(p):
@@ -62,6 +61,7 @@ def d2(p):
     cost_duration, cost = _time(compute_cost)
     return cost
 
+
 def ReqMonitor(x1):
     sig = np.array(x1[0])
     phi_a = -1*np.min([3-sig,sig+20], 0)
@@ -73,7 +73,7 @@ def ReqMonitor(x1):
     phi = np.min(np.max([phi_a, phi_b],0))
 
     # Change this back to -50,50 if you are not changing bounds
-    const = min(min(150-sig), min(sig-(-50)))
+    const = min(min(50-sig), min(sig-(-50)))
 
     return min(phi, const)
 
