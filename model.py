@@ -45,9 +45,16 @@ phi2 = r"((eventually[0,7](x1 >= 0 and x1 <= 3)) and (always[8,10](x1 >=0 and x1
 phi3 = r"((eventually[0, 10] (x1 >= 0 and x1 <= 3)) and (eventually[0, 10] (x1 >= 7 and x1 <= 10))) and (always(x1 >= 0 and x1 <= 10))"
 phi4 = r"((eventually[0, 3] (x1 >= 0 and x1 <= 2)) and (eventually[3, 6] (x1 >= 4 and x1 <= 6)) and (eventually[6, 9] (x1 >= 15 and x1 <= 17))) and (always(x1 >= 0 and x1 <= 20))"
 
+CC1 = r"(not(always[0, 99](y54 < 40))) and (always(y54 >= -30 and y54 <= 200))"
+CC2 = r"(not(always[0, 69](eventually[0, 30](y54 > 10)))) and (always(y54 >= -30 and y54 <= 200))"
+CC3 = r"(not(always[0, 79]((always[0, 19](y54 < 32)) or (eventually[0, 19](y54 > 33))))) and (always(y54 >= -30 and y54 <= 200))"
+CC4 = r"(not(always[0, 79]((always[0, 19](y54 < 30)) or (eventually[0, 19](y54 > 35))))) and (always(y54 >= -30 and y54 <= 200))"
+CC5 = r"(not(always[0, 1](eventually[0, 30](always[0, 4](y54 > 10))))) and (always(y54 >= -30 and y54 <= 200))"
 
 
-specification = RTAMTDense(phi3, {"x1":0})
+
+
+specification = RTAMTDense(CC5, {"y54":0})
 
 
 # THE ORECAL FUNCTION

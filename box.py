@@ -258,6 +258,13 @@ def closestBox(x,U):
             box = i
     return box
 
+def actd1(x,U):
+    dist = 10000000
+    for i in U.Boxes:
+        if i.actDist(x) < dist:
+            dist = i.actDist(x)
+    return dist
+
 def project(x,U):
     B = closestBox(x,U)
     while d1D(x,U)[0] < 0:
