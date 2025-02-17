@@ -3,7 +3,7 @@ import math
 from typing import Any
 
 import numpy as np
-import plotly.graph_objects as go
+# import plotly.graph_objects as go
 import staliro
 
 from staliro.core import best_eval, best_run

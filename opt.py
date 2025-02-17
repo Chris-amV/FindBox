@@ -10,6 +10,10 @@ from model import d2
 from LanguageBoxGeneral import sampleC
 from ss_tracker.ss_track import ss_track
 
+def repeatBox(B,a,b):
+    for i in range(B.dim):
+        B.Borders[i] = [a,b]
+    return B
 
 phi1 = r"(always(x1 >= 0 and x1 <= 10) and always not (x1 >= 3 and x1 <= 5)) and (always(x1 >= 0 and x1 <= 10))"
 def phi1Set():
@@ -80,6 +84,22 @@ def phi4Set():
                 space1.addBoxes(B1)
     return space1
 
+def phi5Set():
+    space1 = space(30)
+    Bo = Box(30)
+    Bo = repeatBox(Bo,0,100)
+    for i in range(10):
+        B = copy.deepcopy(Bo)
+        B.Borders[i] = [0,5]
+        for j in range(10,20):
+            B1 = copy.deepcopy(B)
+            B1.Borders[j] = [95,100]
+            for k in range(20,30):
+                B2 = copy.deepcopy(B1)
+                B2.Borders[k] = [0,5]
+                space1.addBoxes(B2)
+    return space1
+
 phi5 = r"((always[0, 5] (x1 >= 0 and x1 <= 3)) and (always[6, 10] (x1 >= 50 and x1 <= 60)))"
 B = Box(10)
 B.Borders = [[0,3],[0,3],[0,3],[0,3],[0,3],[50,60],[50,60],[50,60],[50,60],[50,60]]
@@ -91,34 +111,45 @@ space2 = phi2Set()
 space3 = phi3Set()
 space4 = phi4Set()
 
-spaces = [space1,space2,space3,space4,space5]
+# spaces = [space1,space2,space3,space4,space5]
 s = 0
 def LCW(S):
-    ptemp = point(10)
-    pfail = point(10)
+    ptemp = point(S.dim)
+    pfail = point(S.dim)
     test = sampleC(S,1000)
     results = []
     fail = 0
-    print(s)
     min = 1000000
     countf = 0
     for i in test:
         count = 1
         ptemp.coord = i.coord
-        while count < 40:
+        check = []
+        c = 0
+        while count < 100:
             track = ss_track(ptemp.coord)
             x_nl = track.trajectory()
-            if x_nl == pfail.coord:
-                fail += 1
-                print("failed! for sure")
-                countf += count
+            # print("################################")
+            # print(x_nl)
+            # print(ptemp.coord)
+            # print(count)
+            for che in check:
+                if che.coord == x_nl:
+                    fail += 1
+                    print("failed! for sure")
+                    countf += count
+                    c = 1
+                    break
+            if c == 1:
                 break
             for i in range(len(x_nl)):
                 ptemp.coord[i] = x_nl[i]
                 pfail.coord[i] = x_nl[i]
+            check.append(copy.deepcopy(pfail))
             if d1D(ptemp,S)[0] >= 0:
                 print("succesful tracking!",countf+count)
                 results.append(countf+count)
+                print(ptemp.coord)
                 if count < min:
                     min = count
                 countf = 0
@@ -126,7 +157,7 @@ def LCW(S):
             else:
                 ptemp.coord = project(ptemp,S).coord
                 count += 1
-        if count == 40:
+        if count == 100:
             fail += 1
             print("failed!")
             countf += count
@@ -140,10 +171,10 @@ def LCP(S):
     res = 100000
     for i in S.Boxes:
         print("#############################################################################BOX")
-        SB = space(10)
+        SB = space(S.dim)
         SB.addBoxes(i)
-        ptemp = point(10)
-        pfail = point(10)
+        ptemp = point(S.dim)
+        pfail = point(S.dim)
         test = sampleC(SB,1000)
         results = []
         fail = 0
@@ -151,19 +182,26 @@ def LCP(S):
         min = 1000000
         countf = 0
         for i in test:
-            count = 0
+            count = 1
             ptemp.coord = i.coord
-            while count < 40:
+            check = []
+            c = 0
+            while count < 100:
                 track = ss_track(ptemp.coord)
                 x_nl = track.trajectory()
-                if x_nl == pfail.coord:
-                    fail += 1
-                    print("failed! for sure")
-                    countf += count
+                for che in check:
+                    if che.coord == x_nl:
+                        fail += 1
+                        print("failed! for sure")
+                        countf += count
+                        c = 1
+                        break
+                if c == 1:
                     break
                 for i in range(len(x_nl)):
                     ptemp.coord[i] = x_nl[i]
                     pfail.coord[i] = x_nl[i]
+                check.append(copy.deepcopy(pfail))
                 if d1D(ptemp,S)[0] >= 0:
                     print("succesful tracking!",countf+count)
                     results.append(countf+count)
@@ -174,7 +212,7 @@ def LCP(S):
                 else:
                     ptemp.coord = project(ptemp,SB).coord
                     count += 1
-            if count == 40:
+            if count == 100:
                 fail += 1
                 print("failed!")
                 countf += count
@@ -190,23 +228,24 @@ def LCP(S):
 avrgResults = []
 minA = []
 s=6
-while s < 5:
-    fail,results,min = LCW(spaces[s])
-    if len(results) > 0:
-        avrgResults.append(sum(results)/len(results))
-    else:
-        avrgResults.append(0)
-    minA.append(min)
-    avrgResults.append(fail)
-    avrgResults.append(len(results))
-    print("Average number of iterations:",avrgResults[2*s])
-    print("Number of failed tracking:",fail)
-    print("min: ",min)
-    s += 1
+# while s < 5:
+#     fail,results,min = LCW(spaces[s])
+#     if len(results) > 0:
+#         avrgResults.append(sum(results)/len(results))
+#     else:
+#         avrgResults.append(0)
+#     minA.append(min)
+#     avrgResults.append(fail)
+#     avrgResults.append(len(results))
+#     print("Average number of iterations:",avrgResults[2*s])
+#     print("Number of failed tracking:",fail)
+#     print("min: ",min)
+#     s += 1
 
 
 # print("Average number of iterations:",avrgResults)
 # print("min: ",minA)
 print(LCP(space4))
+# space5 = phi5Set()
 # fail,results,min,res = LCW(space4)
 # print(res)

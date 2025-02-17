@@ -54,30 +54,7 @@ phi4 = r"((eventually[0, 3] (x1 >= 0 and x1 <= 2)) and (eventually[3, 6] (x1 >= 
 
 
 
-
-
-
-space1 = space(10)
-for i in range(10):
-    Bo = Box(10)
-    Bo.Borders = [[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10]]
-    Bo.Borders[i] = [0,3]
-    for j in range(10):
-        B = copy.deepcopy(Bo)
-        if i == j:
-            continue
-        else:
-            B.Borders[j] = [7,10]
-        space1.addBoxes(B)
-
-space1 = space(10)
-Bo = Box(10)
-Bo.Borders = [[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,3],[0,3]]
-for j in range(8):
-    B = copy.deepcopy(Bo)
-    B.Borders[j] = [0,3]
-    space1.addBoxes(B)
-
+phi1 = r"(always(x1 >= 0 and x1 <= 10) and always not (x1 >= 3 and x1 <= 5)) and (always(x1 >= 0 and x1 <= 10))"
 def phi1Set():
     space1 = space(10)
     Bo = Box(10)
@@ -100,12 +77,56 @@ def phi1Set():
         B = copy.deepcopy(B)
     return space1
 
-# space1 = phi1Set()
 
-# for i in space1.Boxes:
-#     print(i.Borders)
+phi2 = r"((eventually[0,7](x1 >= 0 and x1 <= 3)) and (always[8,10](x1 >=0 and x1 <= 3))) and (always(x1 >= 0 and x1 <= 10))"
+def phi2Set():
+    space1 = space(10)
+    Bo = Box(10)
+    Bo.Borders = [[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,3],[0,3]]
+    for j in range(8):
+        B = copy.deepcopy(Bo)
+        B.Borders[j] = [0,3]
+        space1.addBoxes(B)
+    return space1
+
+phi3 = r"((eventually[0, 10] (x1 >= 0 and x1 <= 3)) and (eventually[0, 10] (x1 >= 7 and x1 <= 10))) and (always(x1 >= 0 and x1 <= 10))"
+
+def phi3Set():
+    space1 = space(10)
+    for i in range(10):
+        Bo = Box(10)
+        Bo.Borders = [[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10]]
+        Bo.Borders[i] = [0,3]
+        for j in range(10):
+            B = copy.deepcopy(Bo)
+            if i == j:
+                continue
+            else:
+                B.Borders[j] = [7,10]
+            space1.addBoxes(B)
+    return space1
 
 
+phi4 = r"((eventually[0, 3] (x1 >= 0 and x1 <= 2)) and (eventually[3, 6] (x1 >= 4 and x1 <= 6)) and (eventually[6, 9] (x1 >= 15 and x1 <= 17))) and (always(x1 >= 0 and x1 <= 20))"
+def phi4Set():
+    space1 = space(10)
+    for i in range(3):
+        Bo = Box(10)
+        Bo.Borders = [[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10],[0,10]]
+        Bo.Borders[i] = [0,2]
+        for j in range(3,6):
+            B = copy.deepcopy(Bo)
+            B.Borders[j] = [4,6]
+            for k in range(6,10):
+                B1 = copy.deepcopy(B)
+                B1.Borders[k] = [15,17]
+                space1.addBoxes(B1)
+    return space1
+
+space1 = phi1Set()
+space2 = phi2Set()
+space3 = phi3Set()
+space4 = phi4Set()
 
 
 
@@ -190,7 +211,7 @@ def CC5Set():
     Bo = Box(100)
     Bo = repeatBox(Bo,-30,200)
     B = copy.deepcopy(Bo)
-    for i in range(20):
+    for i in range(1):
         print(i)
         space1.Boxes += reqCC5(B,0,i).Boxes
     print(len(space1.Boxes))
@@ -247,60 +268,99 @@ def reqCC5(B,i,o,a=5):
         sT = space(100)
         sT.Boxes = [B1,B2,B3,B4,B5]
         return sT
-# space1 = CC1Set()
-# space2 = CC2Set()
-# space3 = CC3Set()
-# space4 = CC4Set()
-space5 = CC5Set()
+
+CC1space = CC1Set()
+# CC2space = CC2Set()
+# CC3space = CC3Set()
+# CC4space = CC4Set()
+# CC5space = CC5Set()
+
+def plot_space(space, title):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_title(title)
+    space.plot3D(ax, 1,0,230,3)
+    plt.show()
+
+
+for i in CC1space.Boxes:
+    print(i.Borders)
+
+plot_space(CC1space, "CC1 Space")
+
+# plot_space(space2, "Space 2")
+# plot_space(space3, "Space 3")
+# plot_space(space4, "Space 4")
+# plot_space(CC1space, "CC1 Space")
+# plot_space(CC2space, "CC2 Space")
+# plot_space(CC3space, "CC3 Space")
+# plot_space(CC4space, "CC4 Space")
+# plot_space(CC5space, "CC5 Space")
+
 
 
 # for i in space5.Boxes[34400*19:]:
 #     print(i.Borders)
 
-p = point(100)
-p.coord = [0]*100
+# p = point(100)
+# p.coord = [0]*100
 
-S = space5
-B = Box(100)
-B = repeatBox(B,-30,10)
+# S = space5
+# B = Box(100)
+# B = repeatBox(B,-30,10)
 
-U = space(100)
-U.Boxes = [B]
-Sam = sample(U,1000)
-Sam[0] = p
-over = 0
-under = 0
-accurate = 0
-for i in Sam:
-    print(i.coord)
-    D2 = d2(i)
-    print(D2)
-    D1 = d1D(i,S)[0]
-    print(D1)
-    # if d2(i) > 0:
-    #     print(i.coord)
-    #     print(d2(i))
-    #     print(d1D(i,S))
+# U = space(100)
+# U.Boxes = [B]
+# Sam = sample(U,1000)
+# Sam[0] = p
+# over = 0
+# under = 0
+# accurate = 0
+# for i in Sam:
+#     print(i.coord)
+#     D2 = d2(i)
+#     print(D2)
+#     D1 = d1D(i,S)[0]
+#     print(D1)
+#     # if d2(i) > 0:
+#     #     print(i.coord)
+#     #     print(d2(i))
+#     #     print(d1D(i,S))
 
-    if (D2 <0 and D1 > 0):
-        over += 1
-    if (D2 >0 and D1 < 0):
-        under += 1
-    if (d2(i) == d1D(i,S)[0]):
-        accurate += 1
-    elif d2(i) > 0:
-        print(i.coord)
-        print(d2(i))
-        print(d1(i,S))
-        print(d1D(i,S))
-        print(" ")
+#     if (D2 <0 and D1 > 0):
+#         over += 1
+#     if (D2 >0 and D1 < 0):
+#         under += 1
+#     if (d2(i) == d1D(i,S)[0]):
+#         accurate += 1
+#     elif d2(i) > 0:
+#         print(i.coord)
+#         print(d2(i))
+#         print(d1(i,S))
+#         print(d1D(i,S))
+#         print(" ")
 
-print(accurate/10000 *100)
-print(over/10000 *100)
-print(under/10000 *100)
-
-
+# print(accurate/10000 *100)
+# print(over/10000 *100)
+# print(under/10000 *100)
 
 
+
+# phi5 = r"((always[0,2](x1 >= 0 and x1 <=5)) and (eventually[3, 26] (x1 >= 80 and x1 <= 90)) and (eventually[27, 49] (x1 >= 10 and x1 <= 15))) and ((always(x1 >= 0 and x1 <= 100) and (not(eventually[0,9](x1 >=30 and x1 <= 60)) and (not(eventually[40,49](x1 >=30 and x1 <= 60))))))"
+
+# def phi5Set():
+#     space1 = space(100)
+#     Bo = Box(100)
+#     Bo.Borders = repeatBox(Bo,0,100)
+#     Bo.Borders[0] = [0,5]
+#     Bo.Borders[1] = [0,5]
+#     for i in range(10):
+#         Bo.Borders[i] = [0,30]
+#         Bo.Borders[i+40] = [0,30]
+#     B = copy.deepcopy(Bo)
+#     space1.addBoxes(B)
+#     for i in range(2,27):
+#         B.Borders[i] = [80,90]
+    
 
 

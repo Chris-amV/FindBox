@@ -117,10 +117,13 @@ class Box:
                                 fill=False,
                                 lw=5))
 
-    def plot3D(self,ax,b):
-        x, y, z = np.indices((40, 40, 40))
-        axes = [40, 40, 40]
-        cube1 = (x >= self.Borders[0][0]+20) & (y >= self.Borders[1][0]+20) & (z >= self.Borders[2][0]+20) & (x < self.Borders[0][1]+20) & (y < self.Borders[1][1]+20) & (z < self.Borders[2][1]+20)
+    def plot3D(self,ax,b,S1):
+        prej = 0.25
+        S = int(S1*prej)
+        x, y, z = np.indices((S, S, S))
+        axes = [S, S, S]
+        idk = 30
+        cube1 = (x >= (self.Borders[0][0]+idk)*prej) & (y >= (self.Borders[1][0]+idk)*prej) & (z >= (self.Borders[2][0]+idk)*prej) & (x < (self.Borders[0][1]+idk)*prej) & (y < (self.Borders[1][1]+idk)*prej) & (z < (self.Borders[2][1]+idk)*prej)
         colors = np.empty(axes + [4], dtype=np.float32)
         if b == 0:
             colors[cube1] = [0, 0, 1, 0.7]
@@ -222,14 +225,25 @@ class space:
             i.plot(ax)
         plt.show()
 
-    def plot3D(self,ax,x,b):
-        plt.ylim(0,40)
-        plt.xlim(0,40)
-        ax.set_zlim(0,40)
+    def plot3D(self,ax,x,b,S1,L=-1):
+        prej = 0.25
+        S = S1*prej
+        if L == -1:
+            L = len(self.Boxes)
+        plt.ylim(0,S)
+        plt.xlim(0,S)
+        ax.set_zlim(0,S)
         plt.grid()
         if x == 1:
-            for i in self.Boxes:
-                i.plot3D(ax,b)
+            for i in self.Boxes[:L]:
+                print("hi")
+                count = 0
+                # for B in i.Borders[:3]:
+                #     if B == [0,10]:
+                #         count += 1
+                #         break
+                if count <2:
+                    i.plot3D(ax,b,S1)
         plt.show()
 
 
